@@ -1,0 +1,222 @@
+/* Admin Order Board Styles */
+.order-board {
+  padding: var(--space-md);
+}
+
+/* Tabs */
+.board-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+}
+
+.board-tab {
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-weight: var(--fw-medium);
+  color: var(--cc-brown-light);
+  background: var(--cc-cream);
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.board-tab:hover {
+  background: var(--cc-cream-dark);
+}
+
+.board-tab.active {
+  background: var(--cc-brown-dark);
+  color: var(--cc-gold-light);
+}
+
+.board-tab-count {
+  background: var(--color-error);
+  color: white;
+  font-size: var(--fs-xs);
+  min-width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--fw-bold);
+}
+
+/* Columns */
+.board-columns {
+  display: flex;
+  gap: var(--space-md);
+  overflow-x: auto;
+  padding-bottom: var(--space-md);
+  -webkit-overflow-scrolling: touch;
+}
+
+.board-column {
+  min-width: 280px;
+  flex: 1;
+  max-width: 340px;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--cc-cream);
+  border-radius: var(--radius-md);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  margin-bottom: var(--space-sm);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.column-count {
+  background: var(--cc-brown-lighter);
+  color: white;
+  font-size: var(--fs-xs);
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.column-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-height: 100px;
+}
+
+.column-empty {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--cc-brown-lighter);
+  font-size: var(--fs-sm);
+  font-style: italic;
+}
+
+/* Order Card */
+.order-card {
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+}
+
+.order-card.expanded {
+  border-color: var(--cc-gold);
+  box-shadow: var(--shadow-md);
+}
+
+.order-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.order-card-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  color: var(--cc-brown-darkest);
+}
+
+.order-card-customer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.customer-name {
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-sm);
+}
+
+.order-time {
+  font-size: var(--fs-xs);
+  color: var(--cc-brown-lighter);
+}
+
+.order-card-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--space-sm);
+}
+
+.order-item-tag {
+  font-size: var(--fs-xs);
+  background: var(--cc-cream);
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-full);
+  color: var(--cc-brown-light);
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-total {
+  font-weight: var(--fw-bold);
+  color: var(--cc-gold-dark);
+}
+
+.payment-badge {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+}
+
+.pay-status.paid { color: var(--color-success); }
+.pay-status.pending { color: var(--color-warning); }
+
+/* Expanded card details */
+.order-expanded {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--cc-cream-dark);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.order-detail-row {
+  display: flex;
+  gap: var(--space-xs);
+  font-size: var(--fs-sm);
+  align-items: center;
+}
+
+.order-detail-row a {
+  color: var(--cc-gold-dark);
+  text-decoration: underline;
+}
+
+.order-actions {
+  display: flex;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* Responsive — stack columns on mobile */
+@media (max-width: 768px) {
+  .board-columns {
+    flex-direction: column;
+  }
+  .board-column {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}

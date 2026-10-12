@@ -1,0 +1,102 @@
+/* ============================================
+   CRUSH COARSE CAFE — Design Tokens
+   ============================================ */
+
+:root {
+  /* Brand Colors */
+  --cc-brown-darkest: #2C1A12;
+  --cc-brown-dark: #3E2723;
+  --cc-brown: #5D4037;
+  --cc-brown-light: #8D6E63;
+  --cc-brown-lighter: #BCAAA4;
+  --cc-gold: #D4A847;
+  --cc-gold-light: #F0D78C;
+  --cc-gold-dark: #B8922E;
+  --cc-cream: #FFF8E7;
+  --cc-cream-dark: #F5ECD7;
+  --cc-white: #FFFDF5;
+
+  /* Semantic Colors */
+  --color-success: #4CAF50;
+  --color-success-light: #E8F5E9;
+  --color-warning: #FF9800;
+  --color-warning-light: #FFF3E0;
+  --color-error: #E53935;
+  --color-error-light: #FFEBEE;
+  --color-info: #2196F3;
+  --color-info-light: #E3F2FD;
+
+  /* Status Colors */
+  --status-pending: #FF9800;
+  --status-confirmed: #2196F3;
+  --status-preparing: #9C27B0;
+  --status-ready: #4CAF50;
+  --status-delivering: #00BCD4;
+  --status-delivered: #8BC34A;
+  --status-cancelled: #E53935;
+
+  /* Typography */
+  --font-primary: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'DM Serif Display', Georgia, serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 2.5rem;
+  --fs-4xl: 3rem;
+
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Spacing */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(62, 39, 35, 0.08);
+  --shadow-md: 0 4px 12px rgba(62, 39, 35, 0.12);
+  --shadow-lg: 0 8px 30px rgba(62, 39, 35, 0.16);
+  --shadow-xl: 0 16px 48px rgba(62, 39, 35, 0.2);
+  --shadow-gold: 0 4px 20px rgba(212, 168, 71, 0.3);
+  --shadow-inset: inset 0 2px 4px rgba(62, 39, 35, 0.06);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Glass effect */
+  --glass-bg: rgba(255, 253, 245, 0.75);
+  --glass-border: rgba(212, 168, 71, 0.2);
+  --glass-backdrop: blur(16px) saturate(180%);
+
+  /* Z-index layers */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-toast: 9999;
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Crush Coarse Cafe",
+  "short_name": "CrushCoarse",
+  "description": "Order drinks and snacks for campus delivery from Crush Coarse Cafe",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#3E2723",
+  "theme_color": "#3E2723",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+import { useState, useEffect } from 'react';
+import { db } from '../config/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
+
+export function useOrder(orderId) {
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!orderId) {
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = onSnapshot(doc(db, 'orders', orderId), (doc) => {
+      if (doc.exists()) {
+        setOrder({ id: doc.id, ...doc.data() });
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [orderId]);
+
+  return { order, loading };
+}

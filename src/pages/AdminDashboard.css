@@ -1,0 +1,85 @@
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: var(--cc-white);
+}
+
+.admin-header {
+  background: var(--cc-brown-darkest);
+  color: var(--cc-cream);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.admin-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-header h1 {
+  color: var(--cc-gold-light);
+  font-size: var(--fs-xl);
+  margin: 0;
+}
+
+.admin-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-md) 0;
+}
+
+.admin-loading, .admin-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-size: var(--fs-lg);
+  color: var(--cc-brown-light);
+}
+
+.admin-error {
+  color: var(--color-error);
+}
+
+/* Receipt Modal */
+.receipt-modal {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--cc-cream-dark);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.modal-body {
+  padding: var(--space-lg);
+  text-align: center;
+  background: var(--cc-cream-dark);
+}
+
+.receipt-full-img {
+  max-height: 60vh;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--cc-cream-dark);
+}

@@ -1,0 +1,42 @@
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cc-white);
+  padding: var(--space-md);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-xl);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.login-header h2 {
+  font-size: var(--fs-2xl);
+  color: var(--cc-brown-darkest);
+  margin-bottom: var(--space-2xs);
+}
+
+.login-header p {
+  color: var(--cc-brown-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: var(--fs-sm);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.login-btn {
+  margin-top: var(--space-md);
+}

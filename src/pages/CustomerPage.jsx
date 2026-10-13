@@ -8,6 +8,7 @@ import Checkout from '../components/customer/Checkout';
 import OrderTracker from '../components/customer/OrderTracker';
 import { createOrder } from '../services/orderService';
 import { uploadReceipt } from '../services/storageService';
+import cafeLogo from '../assets/logo-main.svg';
 import './CustomerPage.css';
 
 export default function CustomerPage() {
@@ -106,8 +107,13 @@ export default function CustomerPage() {
         <div className="header-content">
           <div className="header-top-bar">
             <div className="header-branding">
-              <h1>Crush Coarse Cafe</h1>
-              <p>Campus Delivery</p>
+              <div className="header-brand-wrap">
+                <img src={cafeLogo} alt="Crush Coarse Cafe Logo" className="header-brand-logo" />
+                <div className="header-brand-text">
+                  <h1 className="header-brand-title">Crush Coarse Cafe</h1>
+                  <p className="header-brand-subtitle">Campus Delivery</p>
+                </div>
+              </div>
             </div>
             <div className="header-actions">
               {permission === 'default' && (

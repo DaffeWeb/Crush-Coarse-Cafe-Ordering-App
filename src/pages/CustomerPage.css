@@ -39,16 +39,51 @@
   text-align: center;
 }
 
-.header-branding h1 {
-  color: var(--cc-gold-light);
-  font-size: var(--fs-3xl);
-  margin-bottom: var(--space-2xs);
+.header-brand-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: left;
 }
 
-.header-branding p {
+.header-brand-logo {
+  height: 64px;
+  width: auto;
+  max-width: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  transition: transform var(--transition-base), filter var(--transition-base);
+}
+
+.header-brand-wrap:hover .header-brand-logo {
+  transform: scale(1.05) rotate(-2deg);
+  filter: drop-shadow(0 6px 16px rgba(212, 168, 71, 0.4));
+}
+
+.header-brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header-brand-title {
+  color: var(--cc-gold-light);
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.header-brand-subtitle {
   color: var(--cc-brown-lighter);
-  font-size: var(--fs-md);
-  letter-spacing: 1px;
+  font-size: var(--fs-sm);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: var(--space-2xs) 0 0 0;
+  font-weight: var(--fw-medium);
 }
 
 .header-actions {
@@ -195,6 +230,20 @@
     flex-direction: column;
     gap: var(--space-xs);
   }
+  .header-brand-wrap {
+    gap: var(--space-sm);
+  }
+  .header-brand-logo {
+    height: 52px;
+    max-width: 64px;
+  }
+  .header-brand-title {
+    font-size: var(--fs-2xl);
+  }
+  .header-brand-subtitle {
+    font-size: var(--fs-xs);
+    letter-spacing: 1.5px;
+  }
   .header-actions {
     position: static;
     transform: none;
@@ -207,6 +256,21 @@
   .customer-notif-banner-actions {
     width: 100%;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-brand-wrap {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-2xs);
+  }
+  .header-brand-text {
+    align-items: center;
+  }
+  .header-brand-logo {
+    height: 56px;
+    max-width: 70px;
   }
 }
 

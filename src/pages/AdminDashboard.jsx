@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useOrders } from '../hooks/useOrders';
+import { useInventory } from '../hooks/useInventory';
 import OrderBoard from '../components/admin/OrderBoard';
+import InventoryManager from '../components/admin/InventoryManager';
 import { updateOrderStatus, updatePaymentStatus } from '../services/orderService';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../hooks/useAuth';
@@ -8,9 +10,13 @@ import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const { orders, loading, error } = useOrders();
+  const { menuItems } = useInventory();
   const { logout } = useAuth();
   const toast = useToast();
   const [receiptUrl, setReceiptUrl] = useState(null);
+  const [activeSection, setActiveSection] = useState('orders');
+
+  const needsRestockCount = menuItems?.filter((i) => i.available && i.stockInfo?.needsRestock).length || 0;
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
@@ -31,24 +37,70 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) return <div className="admin-loading">Loading orders...</div>;
-  if (error) return <div className="admin-error">Error loading orders!</div>;
-
   return (
     <div className="admin-dashboard">
       <header className="admin-header">
         <div className="admin-header-content">
           <h1>Admin Dashboard</h1>
-          <button className="btn btn-outline btn-sm" onClick={logout}>Logout</button>
+          <div className="admin-header-right">
+            <nav className="admin-nav">
+              <button
+                className={`admin-nav-btn ${activeSection === 'orders' ? 'active' : ''}`}
+                onClick={() => setActiveSection('orders')}
+              >
+                📋 Orders
+              </button>
+              <button
+                className={`admin-nav-btn ${activeSection === 'inventory' ? 'active' : ''}`}
+                onClick={() => setActiveSection('inventory')}
+              >
+                📦 Inventory
+                {needsRestockCount > 0 && (
+                  <span className="admin-nav-alert-badge">{needsRestockCount}</span>
+                )}
+              </button>
+            </nav>
+            <button className="btn btn-outline btn-sm admin-logout-btn" onClick={logout}>
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="admin-main">
-        <OrderBoard 
-          orders={orders} 
-          onUpdateStatus={handleUpdateStatus} 
-          onViewReceipt={(url) => setReceiptUrl(url)} 
-        />
+        {activeSection === 'orders' && (
+          <>
+            {needsRestockCount > 0 && (
+              <div className="admin-morning-banner fade-in">
+                <div className="admin-morning-banner-text">
+                  <span>🌅</span>
+                  <span>
+                    <strong>Daily Stock Check-in:</strong> {needsRestockCount} menu items need today's starting stock count.
+                  </span>
+                </div>
+                <button
+                  className="btn btn-primary btn-sm admin-morning-banner-btn"
+                  onClick={() => setActiveSection('inventory')}
+                >
+                  Set Stock Now →
+                </button>
+              </div>
+            )}
+            {loading ? (
+              <div className="admin-loading">Loading orders...</div>
+            ) : error ? (
+              <div className="admin-error">Error loading orders!</div>
+            ) : (
+              <OrderBoard
+                orders={orders}
+                onUpdateStatus={handleUpdateStatus}
+                onViewReceipt={(url) => setReceiptUrl(url)}
+              />
+            )}
+          </>
+        )}
+
+        {activeSection === 'inventory' && <InventoryManager />}
       </main>
 
       {/* Receipt Viewer Modal */}
@@ -64,9 +116,6 @@ export default function AdminDashboard() {
             </div>
             <div className="modal-footer">
               <button className="btn btn-outline" onClick={() => setReceiptUrl(null)}>Close</button>
-              {/* Note: we would need to know WHICH order this receipt belongs to for the verify button to work directly here. 
-                  For now, the manager verifies by looking at the receipt and then closing and proceeding. 
-                  To make the Verify button work here, we'd need to pass the whole order object to onViewReceipt. */}
             </div>
           </div>
         </div>

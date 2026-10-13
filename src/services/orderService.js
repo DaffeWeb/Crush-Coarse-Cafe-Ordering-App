@@ -4,6 +4,7 @@ import {
   addDoc, 
   updateDoc, 
   doc, 
+  getDoc,
   serverTimestamp, 
   query, 
   where, 
@@ -13,6 +14,7 @@ import {
   getCountFromServer
 } from 'firebase/firestore';
 import { APP_CONFIG } from '../config/constants';
+import { decrementStock, restoreStock } from './inventoryService';
 
 const ORDERS_COL = collection(db, 'orders');
 
@@ -97,6 +99,17 @@ export const createOrder = async (orderData) => {
 
   const docRef = await addDoc(ORDERS_COL, newOrder);
 
+  // Decrement stock for each item (best-effort — don't block the order on failure)
+  if (orderData.items && Array.isArray(orderData.items)) {
+    for (const item of orderData.items) {
+      try {
+        await decrementStock(item.id, item.quantity || 1);
+      } catch (err) {
+        console.warn(`Failed to decrement stock for ${item.id}:`, err);
+      }
+    }
+  }
+
   // Remember latest order number locally
   try {
     localStorage.setItem('cc_last_global_order_num', String(nextOrderNumber));
@@ -114,6 +127,24 @@ export const createOrder = async (orderData) => {
 
 export const updateOrderStatus = async (orderId, newStatus) => {
   const orderRef = doc(db, 'orders', orderId);
+
+  // If cancelling order, restore stock for items
+  if (newStatus === 'cancelled') {
+    try {
+      const snap = await getDoc(orderRef);
+      if (snap.exists()) {
+        const orderData = snap.data();
+        if (orderData.status !== 'cancelled' && Array.isArray(orderData.items)) {
+          for (const item of orderData.items) {
+            await restoreStock(item.id, item.quantity || 1);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Could not restore stock on cancellation:', err);
+    }
+  }
+
   await updateDoc(orderRef, {
     status: newStatus,
     updatedAt: serverTimestamp()

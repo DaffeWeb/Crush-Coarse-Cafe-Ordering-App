@@ -64,3 +64,15 @@ export function getDeliveryLabel(order) {
   }
   return label;
 }
+
+/**
+ * Normalizes category names so 'Non-Coffee', 'non-coffee', 'non coffee' match 'non-coffee'
+ */
+export function normalizeCategory(category) {
+  if (!category) return 'other';
+  const cleaned = String(category).trim().toLowerCase().replace(/[\s_]+/g, '-');
+  if (cleaned === 'non-coffee' || cleaned === 'noncoffee') return 'non-coffee';
+  if (cleaned === 'coffee') return 'coffee';
+  if (cleaned === 'snacks' || cleaned === 'snack') return 'snacks';
+  return cleaned;
+}

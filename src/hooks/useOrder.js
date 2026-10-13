@@ -12,12 +12,19 @@ export function useOrder(orderId) {
       return;
     }
 
-    const unsubscribe = onSnapshot(doc(db, 'orders', orderId), (doc) => {
-      if (doc.exists()) {
-        setOrder({ id: doc.id, ...doc.data() });
+    const unsubscribe = onSnapshot(
+      doc(db, 'orders', orderId),
+      (doc) => {
+        if (doc.exists()) {
+          setOrder({ id: doc.id, ...doc.data() });
+        }
+        setLoading(false);
+      },
+      (err) => {
+        console.warn("Error fetching order in useOrder:", err);
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
 
     return () => unsubscribe();
   }, [orderId]);

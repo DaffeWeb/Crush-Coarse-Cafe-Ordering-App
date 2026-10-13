@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import CustomerPage from './pages/CustomerPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
+import DeliveryDashboard from './pages/DeliveryDashboard';
+import DeliveryLogin from './pages/DeliveryLogin';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
 import { useAuth } from './hooks/useAuth';
@@ -15,6 +17,15 @@ function ProtectedAdminRoute() {
   return <AdminDashboard />;
 }
 
+function ProtectedDeliveryRoute() {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+  if (!currentUser) return <DeliveryLogin />;
+
+  return <DeliveryDashboard />;
+}
+
 function App() {
   return (
     <ToastProvider>
@@ -23,6 +34,7 @@ function App() {
           <Routes>
             <Route path="/" element={<CustomerPage />} />
             <Route path="/admin" element={<ProtectedAdminRoute />} />
+            <Route path="/delivery" element={<ProtectedDeliveryRoute />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>

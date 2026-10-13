@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =========================================================================
+    // Crush Coarse Cafe Firestore Security Rules
+    // =========================================================================
+
+    // 1. Menu Items Collection
+    // - Customers can view menu items
+    // - Staff/Admin can manage menu items
+    match /menuItems/{itemId} {
+      allow read: if true;
+      allow write: if true; // Set to `if request.auth != null;` for strict staff-only access
+    }
+
+    // 2. Inventory Collection
+    // - Customers need to read stock counts (to see "Sold Out" or remaining items)
+    // - Customers decrement stock when placing orders
+    // - Staff sets daily starting stock and adjusts availability
+    match /inventory/{itemId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 3. Orders Collection
+    // - Customers create orders without logging in
+    // - Customers view their own live order tracking
+    // - Delivery riders and staff update statuses (preparing, ready, out_for_delivery, delivered)
+    match /orders/{orderId} {
+      allow read, create, update: if true;
+      allow delete: if request.auth != null;
+    }
+
+    // 4. Default fallback for any other collection (e.g. settings, users)
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

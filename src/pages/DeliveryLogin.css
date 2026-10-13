@@ -1,0 +1,47 @@
+/* ============================================
+   Delivery Login Styles
+   ============================================ */
+
+.delivery-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(175deg, var(--cc-brown-darkest) 0%, #1a0f0a 50%, #0f0906 100%);
+  padding: var(--space-md);
+}
+
+.delivery-login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-xl);
+  background: var(--cc-white);
+}
+
+.delivery-login-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.delivery-login-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-sm);
+  animation: bounce 2s infinite;
+}
+
+.delivery-login-header h2 {
+  font-size: var(--fs-2xl);
+  color: var(--cc-brown-darkest);
+  margin-bottom: var(--space-2xs);
+}
+
+.delivery-login-header p {
+  color: var(--cc-brown-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: var(--fs-sm);
+}
+
+.delivery-login-btn {
+  margin-top: var(--space-md);
+}

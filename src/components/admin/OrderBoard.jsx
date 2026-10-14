@@ -16,6 +16,7 @@ export default function OrderBoard({
   orders, 
   onUpdateStatus, 
   onViewReceipt,
+  onViewDeliveryProof,
   onUpdateRefundStatus,
   activeTab: externalTab,
   onTabChange,
@@ -262,7 +263,7 @@ export default function OrderBoard({
                           <button
                             type="button"
                             className="btn btn-outline btn-sm"
-                            onClick={() => onViewReceipt(order.gcashReceiptUrl)}
+                            onClick={() => onViewReceipt(order.gcashReceiptUrl, order.orderNumber, order.customerName)}
                           >
                             📸 View Customer Receipt
                           </button>
@@ -365,6 +366,32 @@ export default function OrderBoard({
                           </div>
                         </div>
 
+                        {/* Media preview chips on card */}
+                        {(order.deliveryProofUrl || (order.paymentMethod === 'gcash' && order.gcashReceiptUrl)) && (
+                          <div className="order-media-chips" onClick={(e) => e.stopPropagation()}>
+                            {order.deliveryProofUrl && (
+                              <button
+                                type="button"
+                                className="media-chip proof-chip"
+                                onClick={() => onViewDeliveryProof?.(order.deliveryProofUrl, order.orderNumber, order.customerName)}
+                                title="View proof of delivery photo"
+                              >
+                                📷 Delivery Photo
+                              </button>
+                            )}
+                            {order.paymentMethod === 'gcash' && order.gcashReceiptUrl && (
+                              <button
+                                type="button"
+                                className="media-chip receipt-chip"
+                                onClick={() => onViewReceipt?.(order.gcashReceiptUrl, order.orderNumber, order.customerName)}
+                                title="View customer payment receipt"
+                              >
+                                🧾 Receipt
+                              </button>
+                            )}
+                          </div>
+                        )}
+
                         {/* Expanded details */}
                         {expandedOrder === order.id && (
                           <div className="order-expanded fade-in" onClick={(e) => e.stopPropagation()}>
@@ -376,13 +403,29 @@ export default function OrderBoard({
                               <span>📍</span>
                               <span>{getDeliveryLabel(order)}</span>
                             </div>
-                            {order.paymentMethod === 'gcash' && order.gcashReceiptUrl && (
-                              <button
-                                className="btn btn-outline btn-sm"
-                                onClick={() => onViewReceipt(order.gcashReceiptUrl)}
-                              >
-                                📸 View Receipt
-                              </button>
+
+                            {/* Media buttons in expanded view */}
+                            {(order.deliveryProofUrl || (order.paymentMethod === 'gcash' && order.gcashReceiptUrl)) && (
+                              <div className="order-expanded-media-row">
+                                {order.deliveryProofUrl && (
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline btn-sm admin-media-btn proof-btn"
+                                    onClick={() => onViewDeliveryProof?.(order.deliveryProofUrl, order.orderNumber, order.customerName)}
+                                  >
+                                    📷 View Delivery Photo
+                                  </button>
+                                )}
+                                {order.paymentMethod === 'gcash' && order.gcashReceiptUrl && (
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline btn-sm admin-media-btn receipt-btn"
+                                    onClick={() => onViewReceipt?.(order.gcashReceiptUrl, order.orderNumber, order.customerName)}
+                                  >
+                                    🧾 View Payment Receipt
+                                  </button>
+                                )}
+                              </div>
                             )}
 
                             {/* Refund Details inside Cancelled card */}

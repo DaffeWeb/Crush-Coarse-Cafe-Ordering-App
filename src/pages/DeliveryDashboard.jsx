@@ -3,6 +3,7 @@ import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../context/ToastContext';
 import { updateOrderStatus } from '../services/orderService';
+import { uploadDeliveryProof } from '../services/storageService';
 import { ORDER_STATUSES } from '../config/constants';
 import { formatPrice, formatOrderNumber, timeAgo, getDeliveryLabel } from '../utils/formatters';
 import './DeliveryDashboard.css';
@@ -14,6 +15,13 @@ export default function DeliveryDashboard() {
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState('ready');
   const [processingId, setProcessingId] = useState(null);
+  
+  // Camera proof of delivery state per order: { [orderId]: File }
+  const [deliveryPhotos, setDeliveryPhotos] = useState({});
+  // Object URLs for previewing captured photo before uploading: { [orderId]: string }
+  const [deliveryPreviews, setDeliveryPreviews] = useState({});
+  // Modal viewer for delivery proof or GCash receipt
+  const [previewModal, setPreviewModal] = useState(null); // { url, title, subtitle }
 
   // Filter orders relevant to delivery
   const readyOrders = orders.filter((o) => o.status === 'ready');
@@ -40,13 +48,61 @@ export default function DeliveryDashboard() {
     }
   };
 
+  const handlePhotoSelect = (orderId, file) => {
+    if (!file) return;
+
+    // Clean up previous object URL if one existed for this order
+    if (deliveryPreviews[orderId]) {
+      URL.revokeObjectURL(deliveryPreviews[orderId]);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setDeliveryPhotos((prev) => ({ ...prev, [orderId]: file }));
+    setDeliveryPreviews((prev) => ({ ...prev, [orderId]: previewUrl }));
+    toast.success('📸 Delivery photo captured! Ready to submit.');
+  };
+
+  const handleRemovePhoto = (orderId) => {
+    if (deliveryPreviews[orderId]) {
+      URL.revokeObjectURL(deliveryPreviews[orderId]);
+    }
+    setDeliveryPhotos((prev) => {
+      const copy = { ...prev };
+      delete copy[orderId];
+      return copy;
+    });
+    setDeliveryPreviews((prev) => {
+      const copy = { ...prev };
+      delete copy[orderId];
+      return copy;
+    });
+  };
+
   const handleMarkDelivered = async (orderId) => {
+    const photoFile = deliveryPhotos[orderId];
+    if (!photoFile) {
+      toast.error('Camera photo proof is required before marking as delivered!');
+      return;
+    }
+
     setProcessingId(orderId);
     try {
-      await updateOrderStatus(orderId, 'delivered');
-      toast.success('Order delivered! ✨');
+      toast.info('Uploading delivery proof to Cloudinary… ☁️');
+      const proofUrl = await uploadDeliveryProof(photoFile);
+
+      if (!proofUrl) {
+        throw new Error('Failed to obtain uploaded proof URL.');
+      }
+
+      await updateOrderStatus(orderId, 'delivered', {
+        deliveryProofUrl: proofUrl,
+        deliveredAt: new Date().toISOString(),
+      });
+
+      toast.success('Order delivered & photo proof recorded! ✨');
+      handleRemovePhoto(orderId);
     } catch (err) {
-      toast.error('Failed to mark as delivered');
+      toast.error(err.message || 'Failed to mark as delivered');
       console.error(err);
     } finally {
       setProcessingId(null);
@@ -208,15 +264,135 @@ export default function DeliveryDashboard() {
                     </button>
                   </div>
                 )}
+                {/* Camera Proof of Delivery Section for Out For Delivery */}
                 {order.status === 'out_for_delivery' && (
-                  <div className="delivery-quick-action" onClick={(e) => e.stopPropagation()}>
+                  <div className="delivery-pod-section" onClick={(e) => e.stopPropagation()}>
+                    <div className="pod-header">
+                      <span className="pod-title">📸 Delivery Photo Proof (Required)</span>
+                      {deliveryPhotos[order.id] && (
+                        <span className="pod-badge-ready">✓ Photo Attached</span>
+                      )}
+                    </div>
+
+                    {!deliveryPreviews[order.id] ? (
+                      <label className="pod-camera-box">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="pod-file-input"
+                          onChange={(e) => handlePhotoSelect(order.id, e.target.files[0])}
+                        />
+                        <div className="pod-camera-prompt">
+                          <span className="pod-camera-icon">📷</span>
+                          <span className="pod-camera-main-text">Take Dropoff Photo</span>
+                          <span className="pod-camera-sub-text">
+                            Tap to open phone camera & snap package delivery
+                          </span>
+                        </div>
+                      </label>
+                    ) : (
+                      <div className="pod-preview-box">
+                        <div
+                          className="pod-preview-img-wrap"
+                          onClick={() =>
+                            setPreviewModal({
+                              url: deliveryPreviews[order.id],
+                              title: `Photo Preview - ${formatOrderNumber(order.orderNumber)}`,
+                              subtitle: `Destination: ${getDeliveryLabel(order)}`,
+                            })
+                          }
+                          title="Click to view full preview"
+                        >
+                          <img
+                            src={deliveryPreviews[order.id]}
+                            alt="Delivery proof preview"
+                            className="pod-preview-img"
+                          />
+                          <div className="pod-preview-overlay">
+                            <span>🔍 View Preview</span>
+                          </div>
+                        </div>
+                        <div className="pod-preview-actions">
+                          <label className="btn btn-outline btn-xs pod-retake-btn">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              capture="environment"
+                              className="pod-file-input"
+                              onChange={(e) => handlePhotoSelect(order.id, e.target.files[0])}
+                            />
+                            🔄 Retake Photo
+                          </label>
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-xs pod-remove-btn"
+                            onClick={() => handleRemovePhoto(order.id)}
+                          >
+                            ✕ Remove
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
                     <button
-                      className="btn btn-primary btn-lg btn-block delivery-action-btn delivered-btn"
+                      className={`btn btn-primary btn-lg btn-block delivery-action-btn delivered-btn ${
+                        !deliveryPhotos[order.id] ? 'btn-disabled-pod' : ''
+                      }`}
                       onClick={() => handleMarkDelivered(order.id)}
-                      disabled={processingId === order.id}
+                      disabled={processingId === order.id || !deliveryPhotos[order.id]}
                     >
-                      {processingId === order.id ? 'Updating…' : '✨ Mark as Delivered'}
+                      {processingId === order.id ? (
+                        <span className="pod-loading-text">
+                          <span className="pod-spinner"></span> Uploading Proof & Completing…
+                        </span>
+                      ) : !deliveryPhotos[order.id] ? (
+                        '📷 Take Photo to Deliver'
+                      ) : (
+                        '✨ Upload Photo & Mark Delivered'
+                      )}
                     </button>
+                    {!deliveryPhotos[order.id] && (
+                      <p className="pod-required-note">
+                        ⚠️ Rider camera photo is required to mark this order as delivered.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Media Viewing Buttons for Delivered / Completed Orders */}
+                {(order.deliveryProofUrl || (order.paymentMethod === 'gcash' && order.gcashReceiptUrl)) && (
+                  <div className="delivery-card-media-buttons" onClick={(e) => e.stopPropagation()}>
+                    {order.deliveryProofUrl && (
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm delivery-view-media-btn proof-btn"
+                        onClick={() =>
+                          setPreviewModal({
+                            url: order.deliveryProofUrl,
+                            title: `📷 Proof of Delivery - ${formatOrderNumber(order.orderNumber)}`,
+                            subtitle: `Delivered to: ${order.customerName} (${getDeliveryLabel(order)})`,
+                          })
+                        }
+                      >
+                        📷 View Delivery Photo
+                      </button>
+                    )}
+                    {order.paymentMethod === 'gcash' && order.gcashReceiptUrl && (
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm delivery-view-media-btn receipt-btn"
+                        onClick={() =>
+                          setPreviewModal({
+                            url: order.gcashReceiptUrl,
+                            title: `🧾 Payment Receipt - ${formatOrderNumber(order.orderNumber)}`,
+                            subtitle: `Customer: ${order.customerName} • Total: ${formatPrice(order.totalAmount)}`,
+                          })
+                        }
+                      >
+                        🧾 View Payment Receipt
+                      </button>
+                    )}
                   </div>
                 )}
 
@@ -251,6 +427,55 @@ export default function DeliveryDashboard() {
           </div>
         )}
       </main>
+
+      {/* Full Image Preview Modal for Proof / Receipt */}
+      {previewModal && (
+        <div className="modal-overlay" onClick={() => setPreviewModal(null)}>
+          <div
+            className="modal-content delivery-image-modal fade-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="delivery-modal-title-wrap">
+                <h3>{previewModal.title}</h3>
+                {previewModal.subtitle && (
+                  <p className="delivery-modal-subtitle">{previewModal.subtitle}</p>
+                )}
+              </div>
+              <button
+                className="btn btn-icon"
+                onClick={() => setPreviewModal(null)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body delivery-modal-image-body">
+              <img
+                src={previewModal.url}
+                alt={previewModal.title}
+                className="delivery-full-img"
+              />
+            </div>
+            <div className="modal-footer">
+              <a
+                href={previewModal.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline btn-sm"
+              >
+                ↗ Open Full Resolution
+              </a>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => setPreviewModal(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

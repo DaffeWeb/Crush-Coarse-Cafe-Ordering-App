@@ -217,6 +217,18 @@
   font-size: var(--fs-lg);
 }
 
+.admin-modal-title-wrap h3 {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--cc-brown-darkest);
+}
+
+.admin-modal-subtitle {
+  margin: 2px 0 0 0;
+  font-size: var(--fs-xs);
+  color: var(--cc-brown-light);
+}
+
 .modal-body {
   padding: var(--space-lg);
   text-align: center;

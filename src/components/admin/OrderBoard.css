@@ -682,3 +682,86 @@
   text-align: center;
   padding: 4px 0;
 }
+
+/* Media Preview Chips in Order Cards */
+.order-media-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.media-chip {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all var(--transition-fast);
+}
+
+.media-chip.proof-chip {
+  background: #E8F5E9;
+  border-color: #A5D6A7;
+  color: #2E7D32;
+}
+
+.media-chip.proof-chip:hover {
+  background: #C8E6C9;
+  border-color: #4CAF50;
+  transform: translateY(-1px);
+}
+
+.media-chip.receipt-chip {
+  background: #E3F2FD;
+  border-color: #90CAF9;
+  color: #1565C0;
+}
+
+.media-chip.receipt-chip:hover {
+  background: #BBDEFB;
+  border-color: #2196F3;
+  transform: translateY(-1px);
+}
+
+/* Expanded Card Media Action Row */
+.order-expanded-media-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 4px 0;
+}
+
+.admin-media-btn {
+  font-size: var(--fs-xs) !important;
+  font-weight: var(--fw-medium) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-media-btn.proof-btn {
+  border-color: #81C784 !important;
+  color: #2E7D32 !important;
+  background: #F1F8E9 !important;
+}
+
+.admin-media-btn.proof-btn:hover {
+  background: #E8F5E9 !important;
+  border-color: #4CAF50 !important;
+}
+
+.admin-media-btn.receipt-btn {
+  border-color: #90CAF9 !important;
+  color: #1565C0 !important;
+  background: #E8F0FE !important;
+}
+
+.admin-media-btn.receipt-btn:hover {
+  background: #E3F2FD !important;
+  border-color: #42A5F5 !important;
+}

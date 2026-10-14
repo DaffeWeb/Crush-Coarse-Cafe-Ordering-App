@@ -13,7 +13,7 @@ export default function AdminDashboard() {
   const { menuItems } = useInventory();
   const { logout } = useAuth();
   const toast = useToast();
-  const [receiptUrl, setReceiptUrl] = useState(null);
+  const [previewModal, setPreviewModal] = useState(null); // { url, title, subtitle }
   const [activeSection, setActiveSection] = useState('orders');
   const [boardTab, setBoardTab] = useState('active');
 
@@ -38,10 +38,26 @@ export default function AdminDashboard() {
     try {
       await updatePaymentStatus(orderId, 'confirmed');
       toast.success('Payment verified!');
-      setReceiptUrl(null);
+      setPreviewModal(null);
     } catch (err) {
       toast.error('Failed to verify payment');
     }
+  };
+
+  const handleViewReceipt = (url, orderNumber, customerName) => {
+    setPreviewModal({
+      url,
+      title: `🧾 GCash Receipt ${orderNumber ? `(#${orderNumber})` : ''}`,
+      subtitle: customerName ? `Customer: ${customerName}` : null,
+    });
+  };
+
+  const handleViewDeliveryProof = (url, orderNumber, customerName) => {
+    setPreviewModal({
+      url,
+      title: `📷 Proof of Delivery ${orderNumber ? `(#${orderNumber})` : ''}`,
+      subtitle: customerName ? `Customer: ${customerName}` : null,
+    });
   };
 
   const handleUpdateRefundStatus = async (orderId, refundStatus) => {
@@ -134,7 +150,8 @@ export default function AdminDashboard() {
               <OrderBoard
                 orders={orders}
                 onUpdateStatus={handleUpdateStatus}
-                onViewReceipt={(url) => setReceiptUrl(url)}
+                onViewReceipt={handleViewReceipt}
+                onViewDeliveryProof={handleViewDeliveryProof}
                 onUpdateRefundStatus={handleUpdateRefundStatus}
                 activeTab={boardTab}
                 onTabChange={setBoardTab}
@@ -146,19 +163,32 @@ export default function AdminDashboard() {
         {activeSection === 'inventory' && <InventoryManager />}
       </main>
 
-      {/* Receipt Viewer Modal */}
-      {receiptUrl && (
-        <div className="modal-overlay" onClick={() => setReceiptUrl(null)}>
-          <div className="modal-content receipt-modal" onClick={e => e.stopPropagation()}>
+      {/* Image / Proof / Receipt Viewer Modal */}
+      {previewModal && (
+        <div className="modal-overlay" onClick={() => setPreviewModal(null)}>
+          <div className="modal-content receipt-modal fade-in" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>GCash Receipt</h3>
-              <button className="btn btn-icon" onClick={() => setReceiptUrl(null)}>✕</button>
+              <div className="admin-modal-title-wrap">
+                <h3>{previewModal.title || 'Image Preview'}</h3>
+                {previewModal.subtitle && (
+                  <p className="admin-modal-subtitle">{previewModal.subtitle}</p>
+                )}
+              </div>
+              <button className="btn btn-icon" onClick={() => setPreviewModal(null)}>✕</button>
             </div>
-            <div className="modal-body">
-              <img src={receiptUrl} alt="GCash Receipt" className="receipt-full-img" />
+            <div className="modal-body admin-modal-image-body">
+              <img src={previewModal.url} alt={previewModal.title} className="receipt-full-img" />
             </div>
             <div className="modal-footer">
-              <button className="btn btn-outline" onClick={() => setReceiptUrl(null)}>Close</button>
+              <a
+                href={previewModal.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline btn-sm"
+              >
+                ↗ Open Full Resolution
+              </a>
+              <button className="btn btn-primary btn-sm" onClick={() => setPreviewModal(null)}>Close</button>
             </div>
           </div>
         </div>

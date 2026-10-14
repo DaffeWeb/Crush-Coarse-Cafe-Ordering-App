@@ -11,8 +11,6 @@ export const uploadReceipt = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset);
-  // Optional: organize into a folder
-  formData.append('folder', 'gcash_receipts');
 
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: 'POST',
@@ -32,16 +30,15 @@ export const uploadDeliveryProof = async (file) => {
   if (!file) return null;
   
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_DELIVERY_PRESET || import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   if (!cloudName || !uploadPreset) {
-    throw new Error('Cloudinary configuration is missing in .env');
+    throw new Error('Cloudinary delivery configuration (VITE_CLOUDINARY_CLOUD_NAME or VITE_CLOUDINARY_DELIVERY_PRESET) is missing in .env');
   }
 
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset);
-  formData.append('folder', 'order_delivered');
 
   const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
     method: 'POST',

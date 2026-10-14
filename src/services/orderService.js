@@ -125,36 +125,60 @@ export const createOrder = async (orderData) => {
   };
 };
 
-export const updateOrderStatus = async (orderId, newStatus) => {
+export const updateOrderStatus = async (orderId, newStatus, additionalData = {}) => {
   const orderRef = doc(db, 'orders', orderId);
 
-  // If cancelling order, restore stock for items
-  if (newStatus === 'cancelled') {
-    try {
-      const snap = await getDoc(orderRef);
-      if (snap.exists()) {
-        const orderData = snap.data();
+  const updates = {
+    status: newStatus,
+    updatedAt: serverTimestamp(),
+    ...additionalData,
+  };
+
+  try {
+    const snap = await getDoc(orderRef);
+    if (snap.exists()) {
+      const orderData = snap.data();
+
+      // If cancelling order, restore stock for items
+      if (newStatus === 'cancelled') {
         if (orderData.status !== 'cancelled' && Array.isArray(orderData.items)) {
           for (const item of orderData.items) {
             await restoreStock(item.id, item.quantity || 1);
           }
         }
       }
-    } catch (err) {
-      console.warn('Could not restore stock on cancellation:', err);
+
+      // Payment status transition logic:
+      // - GCash: payment status changes from pending to confirmed after confirmation status in the order
+      if (newStatus === 'confirmed' && orderData.paymentMethod === 'gcash') {
+        updates.paymentStatus = 'confirmed';
+      }
+
+      // - COD: payment status changes from pending to confirmed after it is finally delivered
+      if (newStatus === 'delivered' && orderData.paymentMethod === 'cod') {
+        updates.paymentStatus = 'confirmed';
+      }
     }
+  } catch (err) {
+    console.warn('Error during order status update preprocessing:', err);
   }
 
-  await updateDoc(orderRef, {
-    status: newStatus,
-    updatedAt: serverTimestamp()
-  });
+  await updateDoc(orderRef, updates);
 };
 
-export const updatePaymentStatus = async (orderId, status) => {
+export const updatePaymentStatus = async (orderId, status = 'confirmed') => {
     const orderRef = doc(db, 'orders', orderId);
     await updateDoc(orderRef, {
         paymentStatus: status,
+        updatedAt: serverTimestamp()
+    });
+};
+
+export const updateRefundStatus = async (orderId, refundStatus = 'refunded') => {
+    const orderRef = doc(db, 'orders', orderId);
+    await updateDoc(orderRef, {
+        refundStatus,
+        refundedAt: refundStatus === 'refunded' ? serverTimestamp() : null,
         updatedAt: serverTimestamp()
     });
 };

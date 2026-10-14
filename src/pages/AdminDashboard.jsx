@@ -3,7 +3,7 @@ import { useOrders } from '../hooks/useOrders';
 import { useInventory } from '../hooks/useInventory';
 import OrderBoard from '../components/admin/OrderBoard';
 import InventoryManager from '../components/admin/InventoryManager';
-import { updateOrderStatus, updatePaymentStatus } from '../services/orderService';
+import { updateOrderStatus, updatePaymentStatus, updateRefundStatus } from '../services/orderService';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../hooks/useAuth';
 import './AdminDashboard.css';
@@ -15,8 +15,15 @@ export default function AdminDashboard() {
   const toast = useToast();
   const [receiptUrl, setReceiptUrl] = useState(null);
   const [activeSection, setActiveSection] = useState('orders');
+  const [boardTab, setBoardTab] = useState('active');
 
   const needsRestockCount = menuItems?.filter((i) => i.available && i.stockInfo?.needsRestock).length || 0;
+  
+  const pendingRefundsCount = orders?.filter(
+    (o) => o.status === 'cancelled' && 
+      (o.paymentMethod === 'gcash' || o.refundPlatform || o.gcashReceiptUrl) && 
+      o.refundStatus !== 'refunded'
+  ).length || 0;
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
@@ -29,11 +36,20 @@ export default function AdminDashboard() {
 
   const handleVerifyPayment = async (orderId) => {
     try {
-      await updatePaymentStatus(orderId, 'paid');
+      await updatePaymentStatus(orderId, 'confirmed');
       toast.success('Payment verified!');
       setReceiptUrl(null);
     } catch (err) {
       toast.error('Failed to verify payment');
+    }
+  };
+
+  const handleUpdateRefundStatus = async (orderId, refundStatus) => {
+    try {
+      await updateRefundStatus(orderId, refundStatus);
+      toast.success(refundStatus === 'refunded' ? 'Order marked as refunded! ✓' : 'Refund status reset.');
+    } catch (err) {
+      toast.error('Failed to update refund status');
     }
   };
 
@@ -70,6 +86,30 @@ export default function AdminDashboard() {
       <main className="admin-main">
         {activeSection === 'orders' && (
           <>
+            {/* Refund Alert Banner */}
+            {pendingRefundsCount > 0 && (
+              <div className="admin-refund-banner fade-in">
+                <div className="admin-refund-banner-text">
+                  <span className="refund-banner-icon">💸</span>
+                  <div>
+                    <strong>
+                      {pendingRefundsCount} Cancelled Order{pendingRefundsCount > 1 ? 's' : ''} Need Refund
+                    </strong>
+                    <p>Customers cancelled their online order and are awaiting refund processing.</p>
+                  </div>
+                </div>
+                <button
+                  className="btn btn-sm admin-refund-banner-btn"
+                  onClick={() => {
+                    setActiveSection('orders');
+                    setBoardTab('refunds');
+                  }}
+                >
+                  Review Refunds ({pendingRefundsCount}) →
+                </button>
+              </div>
+            )}
+
             {needsRestockCount > 0 && (
               <div className="admin-morning-banner fade-in">
                 <div className="admin-morning-banner-text">
@@ -95,6 +135,9 @@ export default function AdminDashboard() {
                 orders={orders}
                 onUpdateStatus={handleUpdateStatus}
                 onViewReceipt={(url) => setReceiptUrl(url)}
+                onUpdateRefundStatus={handleUpdateRefundStatus}
+                activeTab={boardTab}
+                onTabChange={setBoardTab}
               />
             )}
           </>

@@ -8,6 +8,7 @@ export function useOrder(orderId) {
 
   useEffect(() => {
     if (!orderId) {
+      setOrder(null);
       setLoading(false);
       return;
     }
@@ -17,6 +18,8 @@ export function useOrder(orderId) {
       (doc) => {
         if (doc.exists()) {
           setOrder({ id: doc.id, ...doc.data() });
+        } else {
+          setOrder(null);
         }
         setLoading(false);
       },

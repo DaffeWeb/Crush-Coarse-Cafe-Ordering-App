@@ -54,14 +54,14 @@ export const STATUS_FLOW = {
 // Payment methods
 export const PAYMENT_METHODS = {
   cod: { label: 'Cash on Delivery', icon: '💵', description: 'Pay when your order arrives' },
-  gcash: { label: 'GCash', icon: '📱', description: 'Send via GCash & upload receipt' },
+  gcash: { label: 'GCash', icon: '📱', description: 'Scan QR code & upload receipt' },
 };
 
 // App config defaults
 export const APP_CONFIG = {
   orderLimitPerDay: 5,
   gcashNumber: '09XX XXX XXXX', // Replace with actual GCash number
-  gcashName: 'Crush Coarse Cafe', // Replace with actual GCash name
+  gcashName: 'Jenis Nino Benedict T.', // Replace with actual GCash name
   cafeName: 'Crush Coarse Cafe',
 };
 

@@ -190,11 +190,9 @@ export default function DeliveryDashboard() {
                   <span className="delivery-total">{formatPrice(order.totalAmount)}</span>
                   <span className={`payment-badge ${order.paymentMethod}`}>
                     {order.paymentMethod === 'gcash' ? '📱 GCash' : '💵 COD'}
-                    {order.paymentMethod === 'gcash' && (
-                      <span className={`pay-status ${order.paymentStatus}`}>
-                        {order.paymentStatus === 'paid' ? ' ✓' : ' ⏳'}
-                      </span>
-                    )}
+                    <span className={`pay-status ${order.paymentStatus}`}>
+                      {(order.paymentStatus === 'confirmed' || order.paymentStatus === 'paid') ? ' ✓' : ' ⏳'}
+                    </span>
                   </span>
                 </div>
 

@@ -8,6 +8,7 @@ import {
   PAYMENT_METHODS,
   APP_CONFIG,
 } from '../../config/constants';
+import gcashQrCode from '../../assets/gcashQRCode.jpg';
 import './Checkout.css';
 
 export default function Checkout({ 
@@ -296,14 +297,40 @@ export default function Checkout({
             <div className="gcash-section fade-in">
               <div className="gcash-info">
                 <p className="gcash-instruction">
-                  Send <strong>{formatPrice(totalPrice)}</strong> to:
+                  Scan QR code to pay <strong>{formatPrice(totalPrice)}</strong>
                 </p>
                 <div className="gcash-details">
-                  <div className="gcash-number">{APP_CONFIG.gcashNumber}</div>
-                  <div className="gcash-name">{APP_CONFIG.gcashName}</div>
+                  <div className="gcash-qr-container">
+                    <div className="gcash-qr-frame">
+                      <img
+                        src={gcashQrCode}
+                        alt="GCash QR Code"
+                        className="gcash-qr-code"
+                      />
+                    </div>
+                  </div>
+                  <div className="gcash-name">
+                    <span className="gcash-name-label">Account Name:</span>{' '}
+                    <span className="gcash-name-val">{APP_CONFIG.gcashName}</span>
+                  </div>
+                  <div className="gcash-qr-actions">
+                    <a
+                      href={gcashQrCode}
+                      download="CrushCoarseCafe-GCash-QR.jpg"
+                      className="gcash-download-btn"
+                      title="Save QR Code image to device"
+                    >
+                      <span className="gcash-download-icon">📥</span> Save QR Image
+                    </a>
+                  </div>
                 </div>
-                <p className="gcash-note">
-                  After sending, take a screenshot and upload it below.
+                <div className="gcash-help-box">
+                  <p className="gcash-note">
+                    💡 <strong>On mobile?</strong> Save the QR code above or take a screenshot, then open <strong>GCash</strong> → <strong>Scan QR</strong> → <strong>Upload from Gallery</strong>.
+                  </p>
+                </div>
+                <p className="gcash-upload-hint">
+                  After payment, upload your transaction receipt screenshot below:
                 </p>
               </div>
 

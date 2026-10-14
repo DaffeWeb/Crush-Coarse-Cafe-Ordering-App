@@ -162,7 +162,8 @@
 
 .gcash-info {
   background: var(--cc-cream);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--cc-cream-dark);
+  border-radius: var(--radius-lg);
   padding: var(--space-md);
   text-align: center;
 }
@@ -171,31 +172,149 @@
   font-size: var(--fs-sm);
   color: var(--cc-brown);
   margin-bottom: var(--space-sm);
+  line-height: 1.4;
+}
+
+.gcash-instruction strong {
+  color: var(--cc-brown-darkest);
+  font-size: var(--fs-md);
 }
 
 .gcash-details {
   background: var(--cc-white);
+  border: 1px solid var(--cc-cream-dark);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   margin-bottom: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(44, 26, 18, 0.04);
 }
 
-.gcash-number {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: #007DFE;
-  letter-spacing: 1px;
+/* Responsive 1:1 QR Code Frame */
+.gcash-qr-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.gcash-qr-frame {
+  position: relative;
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 1 / 1;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: clamp(8px, 2.5vw, 14px);
+  border: 2px solid var(--cc-cream-dark);
+  box-shadow: 0 4px 16px rgba(44, 26, 18, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.gcash-qr-frame:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(44, 26, 18, 0.12);
+  border-color: var(--cc-gold);
+}
+
+.gcash-qr-code {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  display: block;
+  border-radius: calc(var(--radius-md) - 4px);
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .gcash-name {
   font-size: var(--fs-sm);
   color: var(--cc-brown-light);
-  margin-top: 2px;
+  margin-top: var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+}
+
+.gcash-name-label {
+  color: var(--cc-brown-light);
+  font-weight: var(--fw-regular);
+}
+
+.gcash-name-val {
+  color: var(--cc-brown-darkest);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.3px;
+}
+
+.gcash-qr-actions {
+  margin-top: var(--space-xs);
+}
+
+.gcash-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--cc-cream);
+  color: var(--cc-brown-dark);
+  border: 1px solid var(--cc-cream-dark);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.gcash-download-btn:hover {
+  background: var(--cc-gold-light);
+  border-color: var(--cc-gold);
+  color: var(--cc-brown-darkest);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(212, 168, 71, 0.25);
+}
+
+.gcash-download-icon {
+  font-size: 0.95rem;
+}
+
+.gcash-help-box {
+  background: rgba(212, 168, 71, 0.12);
+  border: 1px dashed rgba(212, 168, 71, 0.4);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  margin-bottom: var(--space-xs);
+  text-align: center;
 }
 
 .gcash-note {
   font-size: var(--fs-xs);
+  color: var(--cc-brown-dark);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.gcash-note strong {
+  color: var(--cc-brown-darkest);
+}
+
+.gcash-upload-hint {
+  font-size: var(--fs-xs);
   color: var(--cc-brown-lighter);
+  margin-top: var(--space-2xs);
+  margin-bottom: 0;
 }
 
 /* Receipt Upload */
